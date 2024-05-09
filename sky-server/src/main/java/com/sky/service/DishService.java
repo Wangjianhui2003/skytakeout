@@ -10,9 +10,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 public interface DishService {
+    DishVO queryById(Long id);
+
     void deleteBatch(List<Long> ids);
 
     public void addDishandFlavor(DishDTO dishDTO);
 
     PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    void reviseDish(DishDTO dishDTO);
 }
