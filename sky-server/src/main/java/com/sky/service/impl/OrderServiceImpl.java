@@ -1,7 +1,10 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
@@ -13,8 +16,10 @@ import com.sky.mapper.AddressBookMapper;
 import com.sky.mapper.OrderDetailMapper;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.ShoppingCartMapper;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,4 +96,28 @@ public class OrderServiceImpl implements OrderService {
 
         return orderSubmitVO;
     }
-  }
+
+    @Override
+    public PageResult pageQuery4User(int page, int pageSize, Integer status) {
+        PageHelper.startPage(page,pageSize);
+
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        ordersPageQueryDTO.setStatus(status);
+
+        Page<Orders> pages = orderMapper.pageQuery(ordersPageQueryDTO);
+        ArrayList<OrderVO> OrderVOList = new ArrayList<>();
+
+        if(pages != null && pages.getTotal() > 0){
+            for(Orders order : pages.getResult()){
+                OrderVO orderVO = new OrderVO();
+                BeanUtils.copyProperties(order,orderVO);
+                List<OrderDetail> orderDetail = orderDetailMapper.getlistById(order.getId());
+                orderVO.setOrderDetailList(orderDetail);
+                OrderVOList.add(orderVO);
+            }
+        }
+        return new PageResult(pages.getTotal(),OrderVOList);
+    }
+
+}
