@@ -6,6 +6,6 @@ import com.sky.entity.User;
 
 public interface UserService {
 
-    User login(UserLoginDTO userLoginDTO);
 
+    User login(UserLoginDTO userLoginDTO);
 }

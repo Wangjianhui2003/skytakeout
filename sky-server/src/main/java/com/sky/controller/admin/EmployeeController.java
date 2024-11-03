@@ -26,7 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/employee")
 @Slf4j
-@Api("员工接口")
+@Api(tags = "员工接口")
 public class EmployeeController {
 
     @Autowired
@@ -36,12 +36,11 @@ public class EmployeeController {
 
     /**
      * 登录
-     *
      * @param employeeLoginDTO
      * @return
      */
     @PostMapping("/login")
-    public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
+    public Result<EmployeeLoginVO> adminLogin(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
         log.info("员工登录：{}", employeeLoginDTO);
 
         Employee employee = employeeService.login(employeeLoginDTO);
@@ -64,19 +63,15 @@ public class EmployeeController {
         return Result.success(employeeLoginVO);
     }
 
-    /**
-     * 退出
-     *
-     * @return
-     */
+    @ApiOperation("登出")
     @PostMapping("/logout")
-    public Result<String> logout() {
+    public Result<String> adminLogout() {
         return Result.success();
     }
 
     @PostMapping
     @ApiOperation("新增员工")
-    public Result save(@RequestBody EmployeeDTO employeeDTO){
+    public Result saveEmp(@RequestBody EmployeeDTO employeeDTO){
         log.info("新增员工,{}",employeeDTO);
         employeeService.save(employeeDTO);
         return Result.success();
@@ -84,7 +79,7 @@ public class EmployeeController {
 
     @GetMapping("/page")
     @ApiOperation("员工分页查询")
-    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
+    public Result<PageResult> pageQuery(EmployeePageQueryDTO employeePageQueryDTO){
         log.info("员工分页查询,参数为,{}",employeePageQueryDTO);
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
@@ -92,7 +87,7 @@ public class EmployeeController {
 
     @PostMapping("/status/{status}")
     @ApiOperation("修改员工状态")
-    public Result changestatus(@PathVariable int status,long id){
+    public Result changeEmpStatus(@PathVariable int status,long id){
         log.info("修改员工状态");
         employeeService.updatestatus(status,id);
         return Result.success();
@@ -100,7 +95,7 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     @ApiOperation("根据id员工数据回显")
-    Result<Employee> getbyId(@PathVariable Long id){
+    Result<Employee> getById(@PathVariable Long id){
         log.info("员工数据回显");
         Employee employee = employeeService.getById(id);
         return Result.success(employee);

@@ -10,27 +10,32 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("AdminShopController")
-@Api("商店相关接口")
+@Api(tags = "商店相关接口")
 @Slf4j
 @RequestMapping("/admin/shop")
 public class ShopController {
+
     @Autowired
     private RedisTemplate redisTemplate;
     public static final String KEY = "SHOP_STATUS";
+
     @PutMapping("/{status}")
     @ApiOperation("设置营业状态")
     public Result setStatus(@PathVariable Integer status){
-        log.info("设置营业状态,{}",status == 1 ? "营业中" : "打烊中");
-
+        log.info("设置店铺营业,{}",status == 1 ? "营业" : "打烊");
         redisTemplate.opsForValue().set(KEY,status);
         return Result.success();
     }
 
+    /**
+     * 获取店铺的营业状态
+     * @return
+     */
     @GetMapping("/status")
-    @ApiOperation("查询(显示)营业状态")
+    @ApiOperation("获取店铺的营业状态")
     public Result<Integer> getStatus(){
-        Integer status = (Integer)redisTemplate.opsForValue().get(KEY);
-        log.info("显示营业状态,{}",status == 1 ? "营业中" : "打烊中");
+        Integer status = (Integer) redisTemplate.opsForValue().get(KEY);
+        log.info("获取到店铺的营业状态为：{}",status == 1 ? "营业中" : "打烊中");
         return Result.success(status);
     }
 }

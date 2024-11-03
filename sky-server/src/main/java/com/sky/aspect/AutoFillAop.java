@@ -23,6 +23,10 @@ public class AutoFillAop {
     @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.annotation.AutoFill)")
     public void autoFillPointCut(){}
 
+    /**
+     * 自动填充createtime和createuser或者updatetime和updateuser
+     * @param joinPoint
+     */
     @Before("autoFillPointCut()")
     public void autoFill(JoinPoint joinPoint){
         log.info("公共字段自动填充");

@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -31,7 +32,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 员工登录
-     *
      * @param employeeLoginDTO
      * @return
      */
@@ -39,7 +39,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         String username = employeeLoginDTO.getUsername();
         String password = employeeLoginDTO.getPassword();
 
-        //1、根据用户名查询数据库中的数据
+        /**
+         * 根据用户名查看员工
+         */
         Employee employee = employeeMapper.getByUsername(username);
 
         //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
@@ -48,8 +50,10 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
 
-        //密码比对
         // TODO 后期需要进行md5加密，然后再进行比对
+        /**
+         * 密码比对
+         */
         password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         if (!password.equals(employee.getPassword())) {
@@ -66,6 +70,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+    /**
+     * 新增员工
+     * @param employeeDTO
+     */
     @Override
     public void save(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
@@ -77,16 +85,31 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.insert(employee);
     }
 
+    /**
+     * 员工分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
     @Override
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        //PageHelper
         int page = employeePageQueryDTO.getPage();
         int pageSize = employeePageQueryDTO.getPageSize();
         PageHelper.startPage(page,pageSize);
 
+        //select
         Page<Employee> employees = employeeMapper.pageQuery(employeePageQueryDTO);
-        return new PageResult(employees.getTotal(),employees.getResult());
+
+        //get result from select
+        long total = employees.getTotal();
+        List<Employee> result = employees.getResult();
+        return new PageResult(total,result);
     }
 
+    /**开启关闭员工锁定
+     * @param status
+     * @param id
+     */
     @Override
     public void updatestatus(int status, long id) {
         Employee employee = Employee.builder()
@@ -95,6 +118,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.update(employee);
     }
 
+    /**
+     * 回显员工数据密码变为******
+      * @param id
+     * @return
+     */
     @Override
     public Employee getById(Long id) {
         Employee employee = employeeMapper.getById(id);
@@ -102,6 +130,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     */
     @Override
     public void updateWorkerInfo(EmployeeDTO employeeDTO){
         Employee employee = new Employee();

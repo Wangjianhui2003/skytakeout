@@ -26,6 +26,10 @@
         where id = #{id}
     </update>
 
+    <update id="setStatusById">
+        update dish set status = #{status} where id = #{id}
+    </update>
+
     <delete id="deleteById">
         delete from dish where id in 
         <foreach collection="ids" item="dishid" separator="," open="(" close=")">
@@ -43,10 +47,10 @@
                 and category_id = #{categoryId}
             </if>
             <if test="status != null">
-                and status = #{status}
+                and dish.status = #{status}
             </if>
         </where>
-        order by update_time desc
+        order by dish.update_time desc
     </select>
 
 

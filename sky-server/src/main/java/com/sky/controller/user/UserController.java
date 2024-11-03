@@ -22,27 +22,32 @@ import java.util.HashMap;
 
 @RestController
 @Slf4j
-@Api("用户相关接口")
+@Api(tags = "用户相关接口")
 @RequestMapping("/user/user")
 public class UserController {
+
     @Autowired
     UserService userService;
     @Autowired
     JwtProperties jwtProperties;
+
     @PostMapping("/login")
     @ApiOperation("登录")
     public Result<UserLoginVO> userLogin(@RequestBody UserLoginDTO userLoginDTO){
         log.info("用户登录,{}",userLoginDTO);
+
         User user = userService.login(userLoginDTO);
 
-        HashMap<String, Object> claims = new HashMap<String, Object>();
+        HashMap<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.USER_ID,user.getId());
-        String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
+
+        String jwt = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
 
         UserLoginVO userLoginVO = UserLoginVO.builder()
                 .id(user.getId())
                 .openid(user.getOpenid())
-                .token(token).build();
+                .token(jwt)
+                .build();
 
         return Result.success(userLoginVO);
     }

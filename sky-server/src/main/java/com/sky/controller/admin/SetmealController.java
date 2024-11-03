@@ -27,82 +27,53 @@ public class SetmealController {
     @Autowired
     private SetmealService setmealService;
 
-    /**
-     * 新增套餐
-     * @param setmealDTO
-     * @return
-     */
-    @PostMapping
+    @PostMapping()
     @ApiOperation("新增套餐")
-    @CacheEvict(cacheNames = "setmealCache",key = "#setmealDTO.categoryId")
-    public Result save(@RequestBody SetmealDTO setmealDTO) {
-        setmealService.saveWithDish(setmealDTO);
+    public Result addSetmeal(@RequestBody SetmealDTO setmealDTO){
+        log.info("新增套餐,{}",setmealDTO);
+        setmealService.addSetmeal(setmealDTO);
         return Result.success();
+
     }
 
-    /**
-     * 根据id查询套餐，用于修改页面回显数据
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/{id}")
-    @ApiOperation("根据id查询套餐")
-    public Result<SetmealVO> getById(@PathVariable Long id) {
-        SetmealVO setmealVO = setmealService.getByIdWithDish(id);
-        return Result.success(setmealVO);
-    }
-
-    /**
-     * 修改套餐
-     *
-     * @param setmealDTO
-     * @return
-     */
-    @PutMapping
-    @ApiOperation("修改套餐")
-    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
-    public Result update(@RequestBody SetmealDTO setmealDTO) {
-        setmealService.update(setmealDTO);
-        return Result.success();
-    }
-
-    /**
-     * 套餐起售停售
-     * @param status
-     * @param id
-     * @return
-     */
-    @PostMapping("/status/{status}")
-    @ApiOperation("套餐起售停售")
-    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
-    public Result startOrStop(@PathVariable Integer status, Long id) {
-        setmealService.startOrStop(status, id);
-        return Result.success();
-    }
-
-    /**
-     * 分页查询
-     * @param setmealPageQueryDTO
-     * @return
-     */
-    @GetMapping("/page")
+    @PostMapping("page")
     @ApiOperation("分页查询")
-    public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO) {
+    public Result<PageResult> pageQuery(@RequestBody SetmealPageQueryDTO setmealPageQueryDTO){
+        log.info("分页查询,{}",setmealPageQueryDTO);
         PageResult pageResult = setmealService.pageQuery(setmealPageQueryDTO);
         return Result.success(pageResult);
     }
 
-    /**
-     * 批量删除套餐
-     * @param ids
-     * @return
-     */
-    @DeleteMapping
-    @ApiOperation("批量删除套餐")
-    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
-    public Result delete(@RequestParam List<Long> ids){
+    @DeleteMapping()
+    @ApiOperation("删除套餐")
+    public Result delete(@RequestBody List<Long> ids){
+        log.info("删除套餐,{}",ids);
         setmealService.deleteBatch(ids);
         return Result.success();
     }
+
+    @PutMapping()
+    @ApiOperation("修改套餐")
+    public Result update(@RequestBody SetmealDTO setmealDTO){
+        log.info("修改套餐,{}",setmealDTO);
+        setmealService.update(setmealDTO);
+        return Result.success();
+    }
+
+    @PostMapping("status/{status}")
+    @ApiOperation("起售停售套餐")
+    public Result changeStatus(Long id,@PathVariable Integer status){
+        log.info("起售停售套餐,{},{}",id,status);
+        setmealService.changeStatus(id,status);
+        return Result.success();
+    }
+
+    @GetMapping("{id}")
+    @ApiOperation("根据id获得套餐(用来回显)")
+    public Result<SetmealVO> getById(@PathVariable Long id){
+        log.info("id获取套餐信息",id);
+        SetmealVO setmealVO = setmealService.getSetmealById(id);
+        return Result.success(setmealVO);
+    }
+
 }

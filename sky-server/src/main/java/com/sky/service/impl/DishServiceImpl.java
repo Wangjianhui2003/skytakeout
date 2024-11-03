@@ -63,8 +63,6 @@ public class DishServiceImpl implements DishService {
             dishFlavorMapper.deleteByDishId(ids);
 //        }
 
-
-
     }
 
     @Transactional
@@ -88,7 +86,7 @@ public class DishServiceImpl implements DishService {
     @Override
     public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
         Page<DishVO> page = dishMapper.pageQuery(dishPageQueryDTO);
-        return new PageResult(page.getTotal(),page);
+        return new PageResult(page.getTotal(),page.getResult());
     }
 
     @Override
@@ -142,5 +140,10 @@ public class DishServiceImpl implements DishService {
                 .status(StatusConstant.ENABLE)
                 .build();
         return dishMapper.list(dish);
+    }
+
+    @Override
+    public void changeStatus(long id, Integer status) {
+        dishMapper.setStatusById(id,status);
     }
 }

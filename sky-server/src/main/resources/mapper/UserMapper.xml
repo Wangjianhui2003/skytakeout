@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.sky.mapper.UserMapper">
 
-<!--    主键回显-->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT into user(openid, name, phone, sex, id_number, avatar, create_time)
-        values
-        (#{openid},#{name},#{phone},#{sex},#{idNumber},#{avatar},#{createTime})
+    <insert id="insert">
+        insert into user (openid,phone,sex,id_number,name,avatar,create_time)
+        (#{openid},#{phone},#{sex},#{idNumber},#{name},#{avatar},#{createTime})
     </insert>
 
+    <select id="getByOpenId" resultType="com.sky.entity.User">
+        select * from user where openid = #{openid}
+    </select>
 </mapper>

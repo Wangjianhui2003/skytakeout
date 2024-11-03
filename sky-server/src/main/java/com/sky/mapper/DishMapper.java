@@ -45,5 +45,5 @@ public interface DishMapper {
     List<Dish> getBySetmealId(Long setmealId);
 
 
-
+    void setStatusById(long id, Integer status);
 }
