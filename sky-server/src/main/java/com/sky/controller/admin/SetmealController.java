@@ -29,6 +29,7 @@ public class SetmealController {
 
     @PostMapping()
     @ApiOperation("新增套餐")
+    @CacheEvict(cacheNames = "setmealCache",key = "#setmealDTO.categoryId") //新增套餐后将所在类别的套餐清除
     public Result addSetmeal(@RequestBody SetmealDTO setmealDTO){
         log.info("新增套餐,{}",setmealDTO);
         setmealService.addSetmeal(setmealDTO);
@@ -36,9 +37,9 @@ public class SetmealController {
 
     }
 
-    @PostMapping("page")
+    @GetMapping("page")
     @ApiOperation("分页查询")
-    public Result<PageResult> pageQuery(@RequestBody SetmealPageQueryDTO setmealPageQueryDTO){
+    public Result<PageResult> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO){
         log.info("分页查询,{}",setmealPageQueryDTO);
         PageResult pageResult = setmealService.pageQuery(setmealPageQueryDTO);
         return Result.success(pageResult);
@@ -46,6 +47,7 @@ public class SetmealController {
 
     @DeleteMapping()
     @ApiOperation("删除套餐")
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     public Result delete(@RequestBody List<Long> ids){
         log.info("删除套餐,{}",ids);
         setmealService.deleteBatch(ids);
@@ -54,6 +56,7 @@ public class SetmealController {
 
     @PutMapping()
     @ApiOperation("修改套餐")
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     public Result update(@RequestBody SetmealDTO setmealDTO){
         log.info("修改套餐,{}",setmealDTO);
         setmealService.update(setmealDTO);
@@ -62,6 +65,7 @@ public class SetmealController {
 
     @PostMapping("status/{status}")
     @ApiOperation("起售停售套餐")
+    @CacheEvict(cacheNames = "setmealCache",allEntries = true)
     public Result changeStatus(Long id,@PathVariable Integer status){
         log.info("起售停售套餐,{},{}",id,status);
         setmealService.changeStatus(id,status);

@@ -44,5 +44,6 @@ public class ShoppingCartController {
         shoppingCartService.cleanCart();
         return Result.success();
     }
+
 }
 

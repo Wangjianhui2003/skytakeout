@@ -58,10 +58,11 @@ public class DishServiceImpl implements DishService {
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
         }
 
-//        for(Long dishId : ids){
-            dishMapper.deleteById(ids);
-            dishFlavorMapper.deleteByDishId(ids);
-//        }
+        dishMapper.deleteById(ids);
+
+        for(Long dishId : ids){
+            dishFlavorMapper.deleteByDishId(dishId);
+        }
 
     }
 
@@ -93,13 +94,14 @@ public class DishServiceImpl implements DishService {
     public void reviseDish(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO,dish);
+
         dishMapper.update(dish);
-        ArrayList<Long> ids = new ArrayList<>();
-        ids.add(dishDTO.getId());
-        dishFlavorMapper.deleteByDishId(ids);
+
+        dishFlavorMapper.deleteByDishId(dishDTO.getId());
+
         List<DishFlavor> flavors = dishDTO.getFlavors();
-        if(flavors != null && flavors.size() != 0){
-            flavors.forEach(flavor -> flavor.setId(dishDTO.getId()));
+        if(flavors != null && !flavors.isEmpty()){
+            flavors.forEach(flavor -> flavor.setDishId(dishDTO.getId()));
             dishFlavorMapper.insertBatch(flavors);
         }
     }

@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
             String msg = username + MessageConstant.ALREADY_EXISTS;
             return Result.error(msg);
         }else{
-            return Result.error("UNKNOWN ERROR");
+            return Result.error("Globle-Exception:UNKNOWN ERROR");
         }
     }
 
